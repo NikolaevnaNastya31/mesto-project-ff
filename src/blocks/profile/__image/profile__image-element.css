@@ -1,0 +1,36 @@
+/* Затемняющий оверлей */
+.profile__image::before {
+    content: "";
+    position: absolute;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  /* иконка поверх */
+  .profile__image::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    background: url('/src/images/edit-icon.svg') no-repeat center / contain;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  /* при наведении на изображение */
+  .profile__image:hover{
+    cursor: pointer;
+  }
+/* показываем оверлей и иконку */
+  .profile__image:hover::before,
+  .profile__image:hover::after {
+    opacity: 1;
+  
+  }

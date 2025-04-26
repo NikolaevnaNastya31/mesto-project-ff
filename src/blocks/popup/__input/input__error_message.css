@@ -1,0 +1,16 @@
+/* спан ошибка */.input__error_message{
+display: none;
+font-family: 'Inter',sans-serif;
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 15px;
+color: #FF0000;
+}
+
+/* .popup__error_visible {
+    display: block;
+} */
+
+
+

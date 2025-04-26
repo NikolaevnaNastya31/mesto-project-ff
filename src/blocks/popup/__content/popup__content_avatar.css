@@ -1,0 +1,6 @@
+.popup__content_avatar{
+    display: flex;
+    min-height: 272px;
+    flex-direction: column;
+    justify-content: space-between;
+  }

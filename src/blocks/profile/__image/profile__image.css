@@ -7,6 +7,10 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+
+  /*  */
+  position: relative;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 740px) {

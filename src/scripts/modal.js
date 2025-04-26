@@ -1,10 +1,20 @@
+import {validationConfig , resetFormInputs, clearValidation} from "./validation.js";
+
+
 export const openModal = (modal) => {
+  const form = modal.querySelector(validationConfig.formSelector); 
+  if (form) {
+    resetFormInputs(form); // Очищаем поля формы только если это нужная форма
+    clearValidation(form, validationConfig); // Сбрасываем валидацию
+  }
+
   modal.classList.add("popup_is-animated");
   setTimeout(() => {
     modal.classList.add("popup_is-opened");
     modal.style.visibility = "visible";
     modal.style.opacity = "1";
   }, 0); 
+  
   document.addEventListener("keyup", handleEscKeyUp);
 };
 
@@ -15,6 +25,7 @@ export const closeModal = (modal) => {
   setTimeout(() => {
     modal.style.visibility = "hidden";
   }, 300); 
+  document.removeEventListener("keyup", handleEscKeyUp);
 };
 
 export const handleEscKeyUp = (e) => {
