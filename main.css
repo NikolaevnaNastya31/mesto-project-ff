@@ -633,6 +633,10 @@ template {
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+
+  /*  */
+  position: relative;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 740px) {
@@ -647,6 +651,42 @@ template {
   }
 }
 
+/* Затемняющий оверлей */
+.profile__image::before {
+    content: "";
+    position: absolute;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  /* иконка поверх */
+  .profile__image::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    background: url(8667ac4a523e8fc42e59.svg) no-repeat center / contain;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  /* при наведении на изображение */
+  .profile__image:hover{
+    cursor: pointer;
+  }
+/* показываем оверлей и иконку */
+  .profile__image:hover::before,
+  .profile__image:hover::after {
+    opacity: 1;
+  
+  }
 .profile {
   font-family: 'Inter', Arial, sans-serif;
   color: #fff;
@@ -704,6 +744,7 @@ template {
 
 .card__image:hover {
   cursor: pointer;
+  
 }
 
 .card__like-button {
@@ -725,6 +766,13 @@ template {
 
 .card__like-button:hover {
   opacity: 0.6;
+}
+
+.card__like-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px; /* расстояние между сердцем и числом */
 }
 
 .card__like-button_is-active {
@@ -794,6 +842,7 @@ template {
     padding: 30px 20px;
   }
 }
+
 
 .popup__content_content_image {
   max-width: 75vw;
@@ -902,6 +951,14 @@ template {
   }
 }
 
+.popup__button_disabled {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.2);
+  outline: rgba(0, 0, 0, 0.2) 1px solid;
+}
+.popup__button_disabled:hover {
+  background: transparent;
+}
 .popup__caption {
   font-size: 12px;
   line-height: 15px;
@@ -919,6 +976,38 @@ template {
   display: block;
 }
 
+.popup__input_type_error {
+  border-bottom: 1px solid #FF0000;
+}
+
+
+/* спан ошибка */.input__error_message{
+display: none;
+font-family: 'Inter',sans-serif;
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 15px;
+color: #FF0000;
+}
+
+/* .popup__error_visible {
+    display: block;
+} */
+
+
+
+
+.popup__content_delete {
+    min-height: 181px;
+   }
+   
+.popup__content_avatar{
+    display: flex;
+    min-height: 272px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 .popup {
   font-family: 'Inter', Arial, sans-serif;
   display: none;
