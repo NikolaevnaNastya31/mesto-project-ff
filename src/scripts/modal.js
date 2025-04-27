@@ -4,8 +4,8 @@ import {validationConfig , resetFormInputs, clearValidation} from "./validation.
 export const openModal = (modal) => {
   const form = modal.querySelector(validationConfig.formSelector); 
   if (form) {
-    resetFormInputs(form); // Очищаем поля формы только если это нужная форма
-    clearValidation(form, validationConfig); // Сбрасываем валидацию
+    resetFormInputs(form); 
+    clearValidation(form, validationConfig); 
   }
 
   modal.classList.add("popup_is-animated");

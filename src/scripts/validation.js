@@ -18,7 +18,6 @@ export const showInputError = (formElement, inputElement, errorMessage, config) 
   // Скрываем ошибку
   export const hideInputError = (formElement, inputElement, config) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-     console.log(inputElement)
     inputElement.classList.remove(config.inputErrorClass);
     errorElement.classList.remove(config.errorClass);
     errorElement.textContent = "";
@@ -123,7 +122,7 @@ export const showInputError = (formElement, inputElement, errorMessage, config) 
     if (formElement && formElement.name === "new-place") {
       const inputList = formElement.querySelectorAll(validationConfig.inputSelector);
       inputList.forEach((input) => {
-        input.value = ""; // Очищаем значение каждого поля ввода
+        input.value = ""; 
       });
     }
   };
