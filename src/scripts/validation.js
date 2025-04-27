@@ -4,7 +4,7 @@ export const validationConfig = {
     submitButtonSelector: ".popup__button",
     inactiveButtonClass: "popup__button_disabled",
     inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
+    errorClass: "popup__error_visible",
     popupButtonDelete: "popup__content_delete",
   };
     // Показываем ошибку
@@ -18,6 +18,7 @@ export const showInputError = (formElement, inputElement, errorMessage, config) 
   // Скрываем ошибку
   export const hideInputError = (formElement, inputElement, config) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+     console.log(inputElement)
     inputElement.classList.remove(config.inputErrorClass);
     errorElement.classList.remove(config.errorClass);
     errorElement.textContent = "";
@@ -51,7 +52,7 @@ export const showInputError = (formElement, inputElement, errorMessage, config) 
   if (isAvatarInput && inputElement.validity.typeMismatch) {
     inputElement.setCustomValidity("Введите адрес изображения");
   }
-  
+
     if (!inputElement.validity.valid) {
       showInputError(
         formElement,

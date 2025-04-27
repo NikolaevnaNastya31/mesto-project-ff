@@ -1,5 +1,5 @@
-/* спан ошибка */.input__error_message{
-display: none;
+.input__error_message{
+display: block;
 font-family: 'Inter',sans-serif;
 font-style: normal;
 font-weight: 400;
@@ -8,9 +8,7 @@ line-height: 15px;
 color: #FF0000;
 }
 
-/* .popup__error_visible {
-    display: block;
-} */
+
 
 
 
