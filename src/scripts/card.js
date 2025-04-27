@@ -1,16 +1,16 @@
-import { cardTemplate, popupDeleteCard } from "./index.js";
 import { deleteCardOnServer, toggleLike } from "./api.js";
 
 // Функция создания карточки
-export function addCard(
+export function createCard({
   cardData,
   handleDelete,
-  handleLike,
   handleImageClick,
   myId,
   openModal,
-  closeModal
-) {
+  closeModal,
+  cardTemplate,
+  popupDeleteCard,
+}) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const titleElement = cardElement.querySelector(".card__title");
   const imageElement = cardElement.querySelector(".card__image");
@@ -21,41 +21,41 @@ export function addCard(
     ".popup__button_confirm-delete"
   );
 
-  // Заполнение карточки
+  const isLikedByMe = (user) => user._id === myId;
+
+  // Функция обновления состояния лайка и счетчика
+  function updateLikeState(updatedLikes) {
+    cardData.likes = updatedLikes;
+    likeCountElement.textContent = updatedLikes.length;
+
+    const isLiked = updatedLikes.some(isLikedByMe);
+    setLikeState(likeButton, isLiked);
+  }
+
+  // Установка данных карточки
   titleElement.textContent = cardData.name;
   imageElement.src = cardData.link;
   imageElement.alt = cardData.name;
-  likeCountElement.textContent = cardData.likes.length;
 
-  // Отображаем активный лайк, если пользователь уже лайкал
-  if (cardData.likes.some((user) => user._id === myId)) {
-    handleLike(likeButton);
-  }
+  updateLikeState(cardData.likes);
 
-  // Обработчик клика по кнопке лайка
+  // Обработчик клика по лайку
   likeButton.addEventListener("click", () => {
-    const isLiked = cardData.likes.some((user) => user._id === myId);
+    const isLikedNow = cardData.likes.some(isLikedByMe);
 
-    toggleLike(cardData._id, isLiked)
+    toggleLike(cardData._id, isLikedNow)
       .then((updatedCard) => {
-        cardData.likes.length = 0;
-        updatedCard.likes.forEach((user) => cardData.likes.push(user));
-        likeCountElement.textContent = cardData.likes.length;
-
-        if (cardData.likes.some((user) => user._id === myId)) {
-          handleLike(likeButton);
-        } else {
-          deleteLike(likeButton);
-        }
+        updateLikeState(updatedCard.likes);
       })
-      .catch((err) =>console.log("Ошибка при обновлении лайка:", err));
+      .catch((err) => console.log("Ошибка при обновлении лайка:", err));
   });
-  // Обработчик клика по изображению карточки
+
+  // Обработчик клика по изображению
   imageElement.addEventListener("click", () => {
     handleImageClick(cardData.link, cardData.name);
   });
 
-  // Если карточка принадлежит текущему пользователю — показываем кнопку удаления
+  // Если карточка принадлежит текущему пользователю
   if (cardData.owner._id === myId) {
     deleteButton.addEventListener("click", () => {
       openModal(popupDeleteCard);
@@ -63,35 +63,33 @@ export function addCard(
       const onConfirmDelete = () => {
         deleteCardOnServer(cardData._id)
           .then(() => {
-            //deleteCard->handleDelete
             handleDelete(cardElement);
             closeModal(popupDeleteCard);
           })
           .catch((err) => console.log("Ошибка удаления:", err))
           .finally(() => {
-            // Удаляем обработчик события при закрытии попапа
             confirmButton.removeEventListener("click", onConfirmDelete);
           });
       };
-      // Функция обработки подтверждения удаления карточки
+
       confirmButton.addEventListener("click", onConfirmDelete);
     });
   } else {
-    handleDelete(deleteButton); 
+    handleDelete(deleteButton); // Прячем кнопку удаления для чужих карточек
   }
+
   return cardElement;
 }
 
-// Функция удаления карточки из DOM
+// Удаление карточки из DOM
 export function deleteCard(cardElement) {
   cardElement.remove();
 }
-
-// Функция обработки лайка (только визуально)
-export function handleLike(likeButton) {
-  likeButton.classList.add("card__like-button_is-active");
-}
-// Функция удаления лайка
-export function deleteLike(likeButton) {
-  likeButton.classList.remove("card__like-button_is-active");
+// Обновление состояния лайка
+function setLikeState(button, liked) {
+  if (liked) {
+    button.classList.add("card__like-button_is-active");
+  } else {
+    button.classList.remove("card__like-button_is-active");
+  }
 }

@@ -1,4 +1,4 @@
-//  Конфигурация проекта 
+//  Конфигурация проекта
 export const config = {
   baseUrl: "https://mesto.nomoreparties.co/v1",
   cohortId: "wff-cohort-36",
@@ -21,7 +21,7 @@ function handleResponse(res) {
   return res.json();
 }
 
-//  Базовая функция для GET-запросов 
+//  Базовая функция для GET-запросов
 export function makeRequest(endpoint) {
   const url = `${config.baseUrl}/${config.cohortId}${endpoint}`;
   return fetch(url, {
@@ -63,11 +63,7 @@ export const addCardToServer = (name, link) => {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify({ name, link }),
-  })
-    .then(handleResponse)
-    .catch((error) => {
-      console.log("Ошибка в процессе добавления карточки:", error);
-    });
+  }).then(handleResponse);
 };
 
 // Удаление карточки
@@ -93,4 +89,3 @@ export function toggleLike(cardId, isLiked) {
     headers: getHeaders(),
   }).then(handleResponse);
 }
-

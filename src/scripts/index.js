@@ -1,8 +1,8 @@
 //  Импорты всех модулей и стилей
 import "../pages/index.css";
-import { addCard, deleteCard, handleLike } from "./card.js";
+import { createCard, deleteCard } from "./card.js";
 import { attachEventListeners, openModal, closeModal } from "./modal.js";
-import { enableValidation, validationConfig } from "./validation.js";
+import { enableValidation } from "./validation.js";
 import {
   addCardToServer,
   changeData,
@@ -10,6 +10,7 @@ import {
   getProfile,
   getCards,
 } from "./api.js";
+import { clearValidation } from "./validation.js";
 
 //  Константы: Темплейты и DOM-элементы
 export const cardTemplate = document.querySelector("#card-template").content;
@@ -30,10 +31,10 @@ const linkInput = formElementPlace.querySelector('input[name="link"]');
 export const placeList = document.querySelector(".places__list");
 
 const buttonOpenProfile = document.querySelector(".profile__edit-button");
-const buttonAddCard = document.querySelector(".profile__add-button");
+const buttoncreateCard = document.querySelector(".profile__add-button");
 
 const popupEditProfile = document.querySelector(".popup_type_edit");
-const popupAddCard = document.querySelector(".popup_type_new-card");
+const popupcreateCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
 export const popupDeleteCard = document.querySelector(".popup_delete_card");
 
@@ -42,11 +43,40 @@ const popupEditAvatar = document.querySelector(".popup_edit_avatar");
 export const formAvatar = popupEditAvatar.querySelector(
   'form[name="edit-avatar"]'
 );
-const linkInputAvatar = formAvatar.querySelector('input[name="link-avatar"]');
+export const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+  popupButtonDelete: "popup__content_delete",
+};
 
 //   Глобальные переменные
 export let myId = null;
-export let idStudent = [];
+
+// Перехватываем отправку формы
+const formList = Array.from(
+ document.querySelectorAll(validationConfig.formSelector));
+
+ formList.forEach((formElement) => {
+  formElement.addEventListener("submit", (evt) => {
+    evt.preventDefault();
+  });
+});
+
+// Функция сброса значений всех полей формы
+export const resetFormInputs = (formElement) => {
+  if (formElement) {
+    const inputList = formElement.querySelectorAll(
+      validationConfig.inputSelector
+    );
+    inputList.forEach((input) => {
+      input.value = "";
+    });
+  }
+};
 
 // Функция открытия попапа с изображением
 export function openImgPopup(src, caption) {
@@ -94,18 +124,16 @@ Promise.all([getProfile(), getCards()])
   .then(([profile, cards]) => {
     editProfile(profile);
     cards.forEach((cardData) => {
-      const ownerId = cardData.owner._id;
-      idStudent.push(ownerId);
-
-      const cardElement = addCard(
+      const cardElement = createCard({
         cardData,
-        deleteCard,
-        handleLike,
-        openImgPopup,
+        handleDelete: deleteCard,
+        handleImageClick: openImgPopup,
         myId,
         openModal,
-        closeModal
-      );
+        closeModal,
+        cardTemplate,
+        popupDeleteCard,
+      });
       placeList.append(cardElement);
     });
   })
@@ -119,22 +147,28 @@ Promise.all([getProfile(), getCards()])
 buttonOpenProfile.addEventListener("click", () => {
   nameInput.value = titleProfile.textContent;
   jobInput.value = descriptionProfile.textContent;
+  resetFormInputs(formElementProfile);
+  clearValidation(formElementProfile, validationConfig);
   openModal(popupEditProfile);
 });
 
 // Открытие попапа добавления карточки
-buttonAddCard.addEventListener("click", () => {
-  openModal(popupAddCard);
+buttoncreateCard.addEventListener("click", () => {
+  resetFormInputs(formElementPlace);
+  clearValidation(formElementPlace, validationConfig);
+  openModal(popupcreateCard);
 });
 
 // Открытие попапа изменения аватара
 profileImage.addEventListener("click", () => {
+  resetFormInputs(formAvatar);
+  clearValidation(formAvatar, validationConfig);
   openModal(popupEditAvatar);
 });
 
 // Привязка обработчиков закрытия попапов
 attachEventListeners(popupEditProfile);
-attachEventListeners(popupAddCard);
+attachEventListeners(popupcreateCard);
 attachEventListeners(popupImage);
 attachEventListeners(popupDeleteCard);
 attachEventListeners(popupEditAvatar);
@@ -144,8 +178,7 @@ attachEventListeners(popupEditAvatar);
 // Отправка формы редактирования профиля
 formElementProfile.addEventListener("submit", handleFormSubmitProfile);
 
-function handleFormSubmitProfile(evt) {
-  evt.preventDefault();
+function handleFormSubmitProfile() {
   const button = formElementProfile.querySelector(".popup__button");
   renderLoading(true, button);
 
@@ -167,8 +200,7 @@ function handleFormSubmitProfile(evt) {
 }
 
 // Отправка формы добавления новой карточки
-formElementPlace.addEventListener("submit", (evt) => {
-  evt.preventDefault();
+formElementPlace.addEventListener("submit", () => {
   const button = formElementPlace.querySelector(".popup__button");
   renderLoading(true, button, "Создание...");
 
@@ -181,19 +213,20 @@ formElementPlace.addEventListener("submit", (evt) => {
     .then((newCard) => {
       newCard.owner = { _id: myId };
 
-      const newCardElement = addCard(
-        newCard,
-        deleteCard,
-        handleLike,
-        openImgPopup,
+      const newCardElement = createCard({
+        cardData: newCard,
+        handleDelete: deleteCard,
+        handleImageClick: openImgPopup,
         myId,
         openModal,
-        closeModal
-      );
+        closeModal,
+        cardTemplate,
+        popupDeleteCard,
+      });
       placeList.prepend(newCardElement);
 
       formElementPlace.reset();
-      closeModal(popupAddCard);
+      closeModal(popupcreateCard);
     })
     .catch((error) => {
       console.log("Ошибка при добавлении карточки:", error);
@@ -206,8 +239,7 @@ formElementPlace.addEventListener("submit", (evt) => {
 // Отправка формы редактирования аватара
 formAvatar.addEventListener("submit", handleFormEditAvatar);
 
-function handleFormEditAvatar(evt) {
-  evt.preventDefault();
+function handleFormEditAvatar() {
   const button = formAvatar.querySelector(".popup__button");
   const linkInputAvatar = formAvatar.querySelector('input[name="link-avatar"]');
   const newAvatar = { avatar: linkInputAvatar.value };
