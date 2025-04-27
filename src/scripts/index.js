@@ -243,7 +243,7 @@ function handleFormEditAvatar() {
   const button = formAvatar.querySelector(".popup__button");
   const linkInputAvatar = formAvatar.querySelector('input[name="link-avatar"]');
   const newAvatar = { avatar: linkInputAvatar.value };
-  //смена текста кнопки
+
   renderLoading(true, button);
 
   editAvatar(newAvatar)
