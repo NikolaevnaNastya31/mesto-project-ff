@@ -2,6 +2,7 @@ const path = require("path"); // подключаем path к конфигу в�
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // подключите плагин
 const { CleanWebpackPlugin } = require("clean-webpack-plugin"); // подключили плагин
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin"); // добавили минификатор CSS
 
 module.exports = {
   entry: { main: "./src/scripts/index.js" },
@@ -10,7 +11,7 @@ module.exports = {
     filename: "main.js",
     publicPath: "",
   },
-  mode: "development", // добавили режим разработчика
+  mode: "production", // добавили режим разработчика
   devServer: {
     static: path.resolve(__dirname, "./dist"), // путь, куда "смотрит" режим разработчика
     compress: true, // это ускорит загрузку в режиме разработки
@@ -58,4 +59,11 @@ module.exports = {
       new MiniCssExtractPlugin() // подключение плагина для объединения файлов
 
   ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      `...`,                
+      new CssMinimizerPlugin(), //добавляем минимизацию CSS
+    ],
+  },
 };

@@ -1,4 +1,3 @@
-import { validationConfig } from "./index.js";
 // Показываем ошибку
 export const showInputError = (
   formElement,
@@ -81,7 +80,14 @@ const setEventListeners = (formElement, config) => {
       toggleButtonState(inputList, buttonElement, config);
     });
   });
+  // Проверка валидности формы
+  formElement.addEventListener("submit", (evt) => {
+    if (!formElement.checkValidity()) {
+      evt.preventDefault(); // Отмена отправки формы
+    }
+  });
 };
+
 // Сброс валидации формы
 export const resetValidation = (formElement, config) => {
   const inputList = Array.from(
@@ -106,7 +112,7 @@ export const enableValidation = (config) => {
 };
 
 // Сброс ошибок
-export const clearValidation = (formElement, config = validationConfig) => {
+export const clearValidation = (formElement, config) => {
   const inputList = Array.from(
     formElement.querySelectorAll(config.inputSelector)
   );
